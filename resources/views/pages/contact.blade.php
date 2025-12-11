@@ -107,9 +107,15 @@
                                 </div>
                                 <div>
                                     <p class="text-gray-400 text-sm font-pixel">Email</p>
-                                    <a href="mailto:rayhan@example.com" class="text-retro-teal hover:text-retro-cyan transition-colors">
-                                        rayhan@example.com
-                                    </a>
+                                    @if($siteSettings?->contact_email)
+                                        <a href="mailto:{{ $siteSettings->contact_email }}" class="text-retro-teal hover:text-retro-cyan transition-colors">
+                                            {{ $siteSettings->contact_email }}
+                                        </a>
+                                    @else
+                                        <a href="mailto:rayhan@example.com" class="text-retro-teal hover:text-retro-cyan transition-colors">
+                                            rayhan@example.com
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="flex items-start">
@@ -117,10 +123,33 @@
                                     <span class="text-xl">���</span>
                                 </div>
                                 <div>
-                                    <p class="text-gray-400 text-sm font-pixel">Availability</p>
-                                    <p class="text-gray-300">Open to new projects</p>
+                                    <p class="text-gray-400 text-sm font-pixel">@if($siteSettings?->contact_phone)Phone@else Availability @endif</p>
+                                    @if($siteSettings?->contact_phone)
+                                        <a href="tel:{{ $siteSettings->contact_phone }}" class="text-retro-teal hover:text-retro-cyan transition-colors">
+                                            {{ $siteSettings->contact_phone }}
+                                        </a>
+                                    @else
+                                        <p class="text-gray-300">Open to new projects</p>
+                                    @endif
                                 </div>
                             </div>
+                            @if($siteSettings?->contact_address || $siteSettings?->contact_city || $siteSettings?->contact_state)
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 bg-retro-purple/20 border-2 border-retro-purple flex items-center justify-center mr-4 flex-shrink-0">
+                                        <span class="text-xl">📍</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-pixel">Address</p>
+                                        <p class="text-gray-300">
+                                            @if($siteSettings->contact_address){{ $siteSettings->contact_address }}<br>@endif
+                                            @if($siteSettings->contact_city){{ $siteSettings->contact_city }},@endif
+                                            @if($siteSettings->contact_state) {{ $siteSettings->contact_state }}@endif
+                                            @if($siteSettings->contact_zip) {{ $siteSettings->contact_zip }}@endif
+                                            @if($siteSettings->contact_country)<br>{{ $siteSettings->contact_country }}@endif
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
                             <div class="flex items-start">
                                 <div class="w-10 h-10 bg-retro-emerald/20 border-2 border-retro-emerald flex items-center justify-center mr-4 flex-shrink-0">
                                     <span class="text-xl">⏱️</span>
@@ -133,25 +162,50 @@
                         </div>
                     </div>
 
-                    <div class="manga-panel">
-                        <h2 class="text-2xl font-bold mb-6 text-retro-purple font-pixel">
-                            <span class="text-retro-purple">$</span> Connect With Me
-                        </h2>
-                        <div class="grid grid-cols-2 gap-4">
-                            <a href="#" class="flex items-center justify-center px-4 py-3 bg-retro-teal/10 border-2 border-retro-teal/50 hover:bg-retro-teal/20 hover:border-retro-teal transition-all group">
-                                <span class="text-retro-teal group-hover:text-retro-cyan transition-colors font-pixel">GitHub</span>
-                            </a>
-                            <a href="#" class="flex items-center justify-center px-4 py-3 bg-retro-indigo/10 border-2 border-retro-indigo/50 hover:bg-retro-indigo/20 hover:border-retro-indigo transition-all group">
-                                <span class="text-retro-indigo group-hover:text-retro-purple transition-colors font-pixel">LinkedIn</span>
-                            </a>
-                            <a href="#" class="flex items-center justify-center px-4 py-3 bg-retro-emerald/10 border-2 border-retro-emerald/50 hover:bg-retro-emerald/20 hover:border-retro-emerald transition-all group">
-                                <span class="text-retro-emerald group-hover:text-retro-teal transition-colors font-pixel">Twitter</span>
-                            </a>
-                            <a href="#" class="flex items-center justify-center px-4 py-3 bg-retro-purple/10 border-2 border-retro-purple/50 hover:bg-retro-purple/20 hover:border-retro-purple transition-all group">
-                                <span class="text-retro-purple group-hover:text-retro-pink transition-colors font-pixel">CodePen</span>
-                            </a>
+                    @if($siteSettings && ($siteSettings->github_url || $siteSettings->linkedin_url || $siteSettings->twitter_url || $siteSettings->instagram_url || $siteSettings->youtube_url || $siteSettings->facebook_url || $siteSettings->tiktok_url))
+                        <div class="manga-panel">
+                            <h2 class="text-2xl font-bold mb-6 text-retro-purple font-pixel">
+                                <span class="text-retro-purple">$</span> Connect With Me
+                            </h2>
+                            <div class="grid grid-cols-2 gap-4">
+                                @if($siteSettings->github_url)
+                                    <a href="{{ $siteSettings->github_url }}" target="_blank" rel="noreferrer" class="flex items-center justify-center px-4 py-3 bg-retro-teal/10 border-2 border-retro-teal/50 hover:bg-retro-teal/20 hover:border-retro-teal transition-all group">
+                                        <span class="text-retro-teal group-hover:text-retro-cyan transition-colors font-pixel">GitHub</span>
+                                    </a>
+                                @endif
+                                @if($siteSettings->linkedin_url)
+                                    <a href="{{ $siteSettings->linkedin_url }}" target="_blank" rel="noreferrer" class="flex items-center justify-center px-4 py-3 bg-retro-indigo/10 border-2 border-retro-indigo/50 hover:bg-retro-indigo/20 hover:border-retro-indigo transition-all group">
+                                        <span class="text-retro-indigo group-hover:text-retro-purple transition-colors font-pixel">LinkedIn</span>
+                                    </a>
+                                @endif
+                                @if($siteSettings->twitter_url)
+                                    <a href="{{ $siteSettings->twitter_url }}" target="_blank" rel="noreferrer" class="flex items-center justify-center px-4 py-3 bg-retro-emerald/10 border-2 border-retro-emerald/50 hover:bg-retro-emerald/20 hover:border-retro-emerald transition-all group">
+                                        <span class="text-retro-emerald group-hover:text-retro-teal transition-colors font-pixel">Twitter/X</span>
+                                    </a>
+                                @endif
+                                @if($siteSettings->instagram_url)
+                                    <a href="{{ $siteSettings->instagram_url }}" target="_blank" rel="noreferrer" class="flex items-center justify-center px-4 py-3 bg-retro-purple/10 border-2 border-retro-purple/50 hover:bg-retro-purple/20 hover:border-retro-purple transition-all group">
+                                        <span class="text-retro-purple group-hover:text-retro-pink transition-colors font-pixel">Instagram</span>
+                                    </a>
+                                @endif
+                                @if($siteSettings->youtube_url)
+                                    <a href="{{ $siteSettings->youtube_url }}" target="_blank" rel="noreferrer" class="flex items-center justify-center px-4 py-3 bg-retro-pink/10 border-2 border-retro-pink/50 hover:bg-retro-pink/20 hover:border-retro-pink transition-all group">
+                                        <span class="text-retro-pink group-hover:text-retro-cyan transition-colors font-pixel">YouTube</span>
+                                    </a>
+                                @endif
+                                @if($siteSettings->facebook_url)
+                                    <a href="{{ $siteSettings->facebook_url }}" target="_blank" rel="noreferrer" class="flex items-center justify-center px-4 py-3 bg-retro-cyan/10 border-2 border-retro-cyan/50 hover:bg-retro-cyan/20 hover:border-retro-cyan transition-all group">
+                                        <span class="text-retro-cyan group-hover:text-retro-teal transition-colors font-pixel">Facebook</span>
+                                    </a>
+                                @endif
+                                @if($siteSettings->tiktok_url)
+                                    <a href="{{ $siteSettings->tiktok_url }}" target="_blank" rel="noreferrer" class="flex items-center justify-center px-4 py-3 bg-retro-indigo/10 border-2 border-retro-indigo/50 hover:bg-retro-indigo/20 hover:border-retro-indigo transition-all group">
+                                        <span class="text-retro-indigo group-hover:text-retro-purple transition-colors font-pixel">TikTok</span>
+                                    </a>
+                                @endif
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     <div class="manga-panel">
                         <h3 class="text-lg font-bold mb-4 text-retro-cyan font-pixel">

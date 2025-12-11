@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Rayhan | Full-Stack Developer')
-@section('meta_description', 'Rayhan - Full-stack Developer Portfolio. Building modern web applications with retro aesthetics and clean code.')
+@section('title', ($siteSettings?->site_name ?? 'Rayhan') . ' | Full-Stack Developer')
+@section('meta_description', $siteSettings?->site_description ?? 'Rayhan - Full-stack Developer Portfolio. Building modern web applications with retro aesthetics and clean code.')
 
 @section('content')
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20">
