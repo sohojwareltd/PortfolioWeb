@@ -10,6 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
 
 class ManageSiteSettings extends SettingsPage
 {
@@ -25,7 +26,7 @@ class ManageSiteSettings extends SettingsPage
     {
         // Ensure all settings properties are present, even if empty
         $defaults = [
-            'site_name' => null,
+            'site_name' => '',
             'site_description' => null,
             'meta_keywords' => null,
             'favicon' => null,
@@ -49,7 +50,68 @@ class ManageSiteSettings extends SettingsPage
         // Merge defaults with submitted data, ensuring all keys exist
         // Filter submitted data to only include valid settings keys, then merge with defaults
         $filtered = array_intersect_key($data, $defaults);
-        return array_merge($defaults, $filtered);
+        $merged = array_merge($defaults, $filtered);
+        
+        // Convert empty strings to null for nullable fields (except required ones)
+        foreach ($merged as $key => $value) {
+            if ($key !== 'site_name' && $value === '') {
+                $merged[$key] = null;
+            }
+        }
+        
+        return $merged;
+    }
+
+    protected function fillForm(): void
+    {
+        try {
+            parent::fillForm();
+        } catch (\Spatie\LaravelSettings\Exceptions\MissingSettings $e) {
+            // If settings don't exist, initialize them with empty values
+            $this->initializeSettingsWithDefaults();
+            parent::fillForm();
+        }
+    }
+
+    protected function initializeSettingsWithDefaults(): void
+    {
+        $group = SiteSettings::group();
+        $defaults = [
+            'site_name' => '',
+            'site_description' => null,
+            'meta_keywords' => null,
+            'favicon' => null,
+            'og_image' => null,
+            'contact_email' => null,
+            'contact_phone' => null,
+            'contact_address' => null,
+            'contact_city' => null,
+            'contact_state' => null,
+            'contact_zip' => null,
+            'contact_country' => null,
+            'facebook_url' => null,
+            'twitter_url' => null,
+            'instagram_url' => null,
+            'linkedin_url' => null,
+            'youtube_url' => null,
+            'github_url' => null,
+            'tiktok_url' => null,
+        ];
+
+        foreach ($defaults as $name => $value) {
+            DB::table('settings')->updateOrInsert(
+                [
+                    'group' => $group,
+                    'name' => $name,
+                ],
+                [
+                    'payload' => json_encode($value),
+                    'locked' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 
     public function form(Schema $schema): Schema
