@@ -22,6 +22,18 @@ class ManageSiteSettings extends SettingsPage
 
     protected static ?string $title = 'Site Settings';
 
+    public function mount(): void
+    {
+        // Ensure settings are initialized when page loads
+        try {
+            app(SiteSettings::class);
+        } catch (\Spatie\LaravelSettings\Exceptions\MissingSettings $e) {
+            $this->initializeSettingsWithDefaults();
+        }
+        
+        parent::mount();
+    }
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         // Ensure all settings properties are present, even if empty
