@@ -26,7 +26,7 @@ class ManageSiteSettings extends SettingsPage
     {
         // Ensure all settings properties are present, even if empty
         $defaults = [
-            'site_name' => '',
+            'site_name' => null,
             'site_description' => null,
             'meta_keywords' => null,
             'favicon' => null,
@@ -52,9 +52,9 @@ class ManageSiteSettings extends SettingsPage
         $filtered = array_intersect_key($data, $defaults);
         $merged = array_merge($defaults, $filtered);
         
-        // Convert empty strings to null for nullable fields (except required ones)
+        // Convert empty strings to null for all nullable fields
         foreach ($merged as $key => $value) {
-            if ($key !== 'site_name' && $value === '') {
+            if ($value === '') {
                 $merged[$key] = null;
             }
         }
@@ -73,11 +73,23 @@ class ManageSiteSettings extends SettingsPage
         }
     }
 
+    public function save(bool $shouldRedirect = true): void
+    {
+        try {
+            parent::save($shouldRedirect);
+        } catch (\Spatie\LaravelSettings\Exceptions\MissingSettings $e) {
+            // If settings don't exist during save, initialize them first
+            $this->initializeSettingsWithDefaults();
+            // Retry save after initialization
+            parent::save($shouldRedirect);
+        }
+    }
+
     protected function initializeSettingsWithDefaults(): void
     {
         $group = SiteSettings::group();
         $defaults = [
-            'site_name' => '',
+            'site_name' => null,
             'site_description' => null,
             'meta_keywords' => null,
             'favicon' => null,
